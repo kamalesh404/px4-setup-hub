@@ -1,0 +1,1 @@
+"""Tests for PX4 Setup Hub."""

@@ -1,0 +1,1 @@
+"""Vehicle communication module."""

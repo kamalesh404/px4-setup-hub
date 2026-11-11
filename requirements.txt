@@ -1,0 +1,16 @@
+# Core GUI & Plotting
+PySide6-Essentials>=6.6.0
+PySide6-Addons>=6.6.0
+pyqtgraph>=0.13.3
+
+# Vehicle Communication & Protocols
+pymavlink>=2.4.40
+pyserial>=3.5
+# mavsdk (Optional when mavsdk server binaries are compatible with system)
+
+# Log Analysis & Storage
+pyulog>=1.0.0
+
+# Testing & Utilities
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
