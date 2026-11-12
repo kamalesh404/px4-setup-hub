@@ -140,3 +140,10 @@ class CalibrationProgress:
     is_done: bool = False
     is_error: bool = False
     error_message: str = ""
+
+
+    def cell_voltage_v(self, cell_count: int = 4) -> float:
+        """Estimate average voltage per cell based on battery pack configuration."""
+        if cell_count <= 0 or self.battery_voltage_v <= 0:
+            return 0.0
+        return round(self.battery_voltage_v / cell_count, 2)
