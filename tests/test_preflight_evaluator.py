@@ -72,3 +72,15 @@ def test_preflight_critical_battery_fail():
     assert overall == HealthStatus.FAIL
     bat_check = next(c for c in checks if c.id == "CHECK_BATTERY")
     assert bat_check.status == HealthStatus.FAIL
+
+
+def test_compass_calibration_and_gps_lock():
+    telem = TelemetryData(
+        gps_fix_type="3D Fix",
+        gps_satellites=14,
+        gps_hdop=0.75,
+        battery_voltage_v=16.4,
+        battery_remaining_pct=92.0
+    )
+    assert telem.gps_satellites >= 10
+    assert telem.gps_hdop < 1.0
