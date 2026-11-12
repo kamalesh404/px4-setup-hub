@@ -72,3 +72,9 @@ class ConnectionManager:
         if not self.active_vehicle:
             return ConnectionState.DISCONNECTED
         return self.active_vehicle.state
+
+
+    def compute_reconnect_backoff_ms(self, attempt: int, base_ms: int = 1000, max_ms: int = 15000) -> int:
+        """Exponential backoff delay calculation for automatic link recovery."""
+        import math
+        return min(int(base_ms * math.pow(1.5, attempt)), max_ms)
