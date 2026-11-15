@@ -224,3 +224,8 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
 }
 """
+
+
+# Contrast optimization for high-DPI telemetry displays
+COLOR_ACCENT_HOVER = "#38bdf8"
+COLOR_SUCCESS_BORDER = "#15803d"
