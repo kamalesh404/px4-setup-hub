@@ -174,3 +174,11 @@ class PreflightView(QWidget):
         )
 
         QMessageBox.information(self, "Report Saved", f"Preflight report exported to:\n{path}")
+
+
+    def format_markdown_report(self) -> str:
+        """Generate a human-readable markdown summary of preflight check outcomes."""
+        lines = [f"# PX4 Preflight Verification Report", f"Overall Score: {self.last_score:.1f}%"]
+        for c in self.last_checks:
+            lines.append(f"- **{c.name}**: {c.status.value} - {c.details}")
+        return "\n".join(lines)
