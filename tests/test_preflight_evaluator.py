@@ -84,3 +84,41 @@ def test_compass_calibration_and_gps_lock():
     )
     assert telem.gps_satellites >= 10
     assert telem.gps_hdop < 1.0
+
+
+def test_connected_non_px4_firmware_is_not_verified_as_px4():
+    info = VehicleInfo(
+        connected=True,
+        board_name="Generic Flight Controller",
+        firmware_version="ArduPilot 4.5.0",
+    )
+
+    checks, _, _ = PreflightEvaluator.evaluate(
+        info,
+        TelemetryData(),
+        {},
+        {},
+    )
+
+    firmware_check = next(c for c in checks if c.id == "CHECK_FW")
+    assert firmware_check.status == HealthStatus.WARNING
+
+
+def test_malformed_calibration_parameters_do_not_crash_evaluation():
+    info = VehicleInfo(connected=True, firmware_version="PX4 Autopilot v1.15.0")
+    params = {
+        "SYS_AUTOSTART": Parameter("SYS_AUTOSTART", "not-a-number"),
+        "CAL_GYRO0_ID": Parameter("CAL_GYRO0_ID", "invalid"),
+        "CAL_ACC0_ID": Parameter("CAL_ACC0_ID", None),
+        "CAL_MAG0_ID": Parameter("CAL_MAG0_ID", "unknown"),
+    }
+
+    checks, _, overall = PreflightEvaluator.evaluate(
+        info,
+        TelemetryData(),
+        {},
+        params,
+    )
+
+    assert checks
+    assert overall in {HealthStatus.FAIL, HealthStatus.WARNING}
