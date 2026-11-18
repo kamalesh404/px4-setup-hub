@@ -34,3 +34,14 @@ def test_vehicle_info_px4_detection():
         firmware_version="PX4 Autopilot v1.15.0"
     )
     assert v.is_px4 is True
+
+
+def test_telemetry_cell_voltage_calculation():
+    telemetry = TelemetryData(
+        battery_voltage_v=16.24,
+        battery_cell_count=4,
+    )
+
+    assert telemetry.cell_voltage_v(telemetry.battery_cell_count) == 4.06
+    assert telemetry.cell_voltage_v(0) == 0.0
+    assert TelemetryData().cell_voltage_v() == 0.0
