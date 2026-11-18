@@ -77,4 +77,9 @@ class ConnectionManager:
     def compute_reconnect_backoff_ms(self, attempt: int, base_ms: int = 1000, max_ms: int = 15000) -> int:
         """Exponential backoff delay calculation for automatic link recovery."""
         import math
+        attempt = max(0, int(attempt))
+        base_ms = max(0, int(base_ms))
+        max_ms = max(0, int(max_ms))
+        if base_ms == 0 or max_ms == 0:
+            return 0
         return min(int(base_ms * math.pow(1.5, attempt)), max_ms)

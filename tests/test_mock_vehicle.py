@@ -3,6 +3,7 @@ Unit tests for MockVehicle communication, telemetry streaming, and calibration.
 """
 import time
 from px4_hub.comms.mock_vehicle import MockVehicle
+from px4_hub.comms.connection_manager import ConnectionManager
 from px4_hub.core.enums import ConnectionState, HealthStatus, CalibrationType, SensorType
 
 
@@ -72,3 +73,13 @@ def test_mock_gyro_calibration_workflow():
     assert vehicle.sensors[SensorType.GYRO].calibrated is True
 
     vehicle.disconnect()
+
+
+def test_reconnect_backoff_is_bounded_and_normalized():
+    manager = ConnectionManager()
+
+    assert manager.compute_reconnect_backoff_ms(-3) == 1000
+    assert manager.compute_reconnect_backoff_ms(0) == 1000
+    assert manager.compute_reconnect_backoff_ms(1) == 1500
+    assert manager.compute_reconnect_backoff_ms(100) == 15000
+    assert manager.compute_reconnect_backoff_ms(2, base_ms=0) == 0
