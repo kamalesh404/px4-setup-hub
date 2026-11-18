@@ -3,6 +3,7 @@ Unit tests for SQLite database manager and parameter snapshot backups.
 """
 import os
 import tempfile
+import sqlite3
 from px4_hub.core.database import DatabaseManager
 
 
@@ -37,3 +38,22 @@ def test_param_backup_save_and_retrieve():
         backups = db.list_param_backups()
         assert len(backups) == 1
         assert backups[0]["tag"] == "Pre-update Test Backup"
+
+
+def test_corrupt_param_backup_json_returns_none():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        db_path = os.path.join(tmp_dir, "test.db")
+        db = DatabaseManager(db_path=db_path)
+
+        with sqlite3.connect(db_path) as conn:
+            conn.execute(
+                """
+                INSERT INTO param_backups
+                (vehicle_uid, board_name, firmware_version, timestamp, tag, params_json)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                ("UID", "Board", "PX4", "2026-11-18", "Corrupt", "{not-json"),
+            )
+
+        backup = db.get_param_backup(1)
+        assert backup is None

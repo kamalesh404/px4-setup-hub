@@ -117,7 +117,10 @@ class DatabaseManager:
             row = cursor.fetchone()
             if row:
                 res = dict(row)
-                res["params"] = json.loads(res["params_json"])
+                try:
+                    res["params"] = json.loads(res["params_json"])
+                except (json.JSONDecodeError, TypeError):
+                    return None
                 return res
             return None
 
