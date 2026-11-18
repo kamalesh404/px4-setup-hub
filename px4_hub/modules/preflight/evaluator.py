@@ -12,6 +12,16 @@ class PreflightEvaluator:
     """Evaluates drone readiness strictly against evidence received from the vehicle."""
 
     @staticmethod
+    def _has_positive_parameter(parameters: Dict[str, Parameter], name: str) -> bool:
+        parameter = parameters.get(name)
+        if parameter is None:
+            return False
+        try:
+            return float(parameter.value) > 0
+        except (TypeError, ValueError):
+            return False
+
+    @staticmethod
     def evaluate(
         vehicle_info: VehicleInfo,
         telemetry: TelemetryData,
@@ -47,7 +57,7 @@ class PreflightEvaluator:
 
         # 2. Airframe / Frame Configuration
         sys_autostart = parameters.get("SYS_AUTOSTART")
-        if sys_autostart and int(sys_autostart.value) > 0:
+        if PreflightEvaluator._has_positive_parameter(parameters, "SYS_AUTOSTART"):
             frame_status = HealthStatus.PASS
             frame_evidence = f"SYS_AUTOSTART = {sys_autostart.value} ({vehicle_info.vehicle_type})"
             frame_expl = "Airframe geometry and mixer configurations loaded."
@@ -71,7 +81,7 @@ class PreflightEvaluator:
         # 3. Gyroscope Calibration
         gyro_sensor = sensors.get(SensorType.GYRO)
         cal_gyro_id = parameters.get("CAL_GYRO0_ID")
-        gyro_calibrated = (gyro_sensor and gyro_sensor.calibrated) or (cal_gyro_id and int(cal_gyro_id.value) > 0)
+        gyro_calibrated = (gyro_sensor and gyro_sensor.calibrated) or PreflightEvaluator._has_positive_parameter(parameters, "CAL_GYRO0_ID")
         
         if gyro_calibrated:
             gyro_status = HealthStatus.PASS
@@ -97,7 +107,7 @@ class PreflightEvaluator:
         # 4. Accelerometer Calibration
         accel_sensor = sensors.get(SensorType.ACCEL)
         cal_acc_id = parameters.get("CAL_ACC0_ID")
-        accel_calibrated = (accel_sensor and accel_sensor.calibrated) or (cal_acc_id and int(cal_acc_id.value) > 0)
+        accel_calibrated = (accel_sensor and accel_sensor.calibrated) or PreflightEvaluator._has_positive_parameter(parameters, "CAL_ACC0_ID")
         
         if accel_calibrated:
             acc_status = HealthStatus.PASS
@@ -123,7 +133,7 @@ class PreflightEvaluator:
         # 5. Compass / Magnetometer Calibration
         mag_sensor = sensors.get(SensorType.MAG)
         cal_mag_id = parameters.get("CAL_MAG0_ID")
-        mag_calibrated = (mag_sensor and mag_sensor.calibrated) or (cal_mag_id and int(cal_mag_id.value) > 0)
+        mag_calibrated = (mag_sensor and mag_sensor.calibrated) or PreflightEvaluator._has_positive_parameter(parameters, "CAL_MAG0_ID")
 
         if mag_calibrated:
             mag_status = HealthStatus.PASS

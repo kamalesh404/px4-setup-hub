@@ -27,7 +27,7 @@ class VehicleInfo:
 
     @property
     def is_px4(self) -> bool:
-        return "px4" in self.firmware_version.lower() or "px4" in self.board_name.lower() or self.connected
+        return "px4" in self.firmware_version.lower() or "px4" in self.board_name.lower()
 
 
 @dataclass
