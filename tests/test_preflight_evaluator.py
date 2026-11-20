@@ -122,3 +122,10 @@ def test_malformed_calibration_parameters_do_not_crash_evaluation():
 
     assert checks
     assert overall in {HealthStatus.FAIL, HealthStatus.WARNING}
+
+
+def test_gps_signal_quality_rating():
+    rating_best = PreflightEvaluator.rate_gps_signal_quality(satellites=16, hdop=0.7)
+    rating_poor = PreflightEvaluator.rate_gps_signal_quality(satellites=4, hdop=3.5)
+    assert rating_best == "EXCELLENT"
+    assert rating_poor == "UNUSABLE"
