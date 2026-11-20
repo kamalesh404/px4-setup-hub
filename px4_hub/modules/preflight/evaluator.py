@@ -238,3 +238,15 @@ class PreflightEvaluator:
             overall = HealthStatus.UNKNOWN
 
         return checks, readiness_score, overall
+
+
+    @staticmethod
+    def rate_gps_signal_quality(satellites: int, hdop: float) -> str:
+        """Classify GNSS lock quality based on visible constellation count and HDOP."""
+        if satellites >= 14 and hdop <= 0.9:
+            return "EXCELLENT"
+        if satellites >= 10 and hdop <= 1.4:
+            return "GOOD"
+        if satellites >= 6 and hdop <= 2.2:
+            return "MARGINAL"
+        return "UNUSABLE"
