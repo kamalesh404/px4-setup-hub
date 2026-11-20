@@ -105,3 +105,10 @@ class TelemetryView(QWidget):
         self.curve_alt.setData(x, list(self.alt_data))
         self.curve_volt.setData(x, list(self.volt_data))
         self.curve_curr.setData(x, list(self.curr_data))
+
+
+    def compute_horizon_angles(self, roll_deg: float, pitch_deg: float) -> tuple:
+        """Sanitize and clamp artificial horizon angles for HUD rendering."""
+        clamped_pitch = max(-90.0, min(90.0, pitch_deg))
+        wrapped_roll = (roll_deg + 180.0) % 360.0 - 180.0
+        return (wrapped_roll, clamped_pitch)
